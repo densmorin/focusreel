@@ -5,29 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>FocusReel</title>
   
-  <!-- Optimisation iPhone PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="FocusReel">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23111827'/><polygon points='40,30 70,50 40,70' fill='%2360a5fa'/></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23000000'/><polygon points='38,28 72,50 38,72' fill='%233b82f6'/></svg>">
 
   <style>
     :root {
-      --bg: #0b0f19;
-      --card: #161e2e;
-      --border: #2e384d;
+      --bg: #000000;
+      --card: #121214;
+      --border: #27272a;
       --accent: #3b82f6;
       --danger: #ef4444;
-      --text: #f9fafb;
-      --subtext: #9ca3af;
+      --text: #fafafa;
+      --subtext: #a1a1aa;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    
+
     body {
       margin: 0;
-      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom) 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
       background: var(--bg);
       color: var(--text);
       display: flex;
@@ -38,44 +37,33 @@
 
     header {
       width: 100%;
-      max-width: 440px;
-      padding: 12px 0;
+      max-width: 420px;
+      padding: 10px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     h1 {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
       margin: 0;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
-    .badge {
-      font-size: 0.65rem;
-      background: rgba(59, 130, 246, 0.2);
-      color: var(--accent);
-      padding: 2px 6px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      font-weight: 600;
+    .header-actions {
+      display: flex;
+      gap: 8px;
     }
 
     .controls {
       width: 100%;
-      max-width: 440px;
+      max-width: 420px;
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .input-row {
-      display: flex;
-      gap: 8px;
+      gap: 6px;
+      margin-bottom: 10px;
     }
 
     input[type="url"] {
@@ -85,12 +73,8 @@
       border-radius: 10px;
       padding: 10px 12px;
       color: #fff;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       outline: none;
-    }
-
-    input[type="url"]:focus {
-      border-color: var(--accent);
     }
 
     button {
@@ -98,48 +82,91 @@
       color: #fff;
       border: none;
       border-radius: 10px;
-      padding: 0 14px;
+      padding: 8px 12px;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     button.secondary {
       background: var(--card);
       border: 1px solid var(--border);
-      color: var(--subtext);
+      color: var(--text);
     }
 
     button.danger {
-      background: rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.18);
       color: var(--danger);
-      border: 1px solid var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.4);
     }
 
-    /* Conteneur 9:16 anti-doomscroll */
-    .player-container {
+    /* Écran vidéo 100% noir */
+    .player-box {
       width: 100%;
       max-width: 400px;
       aspect-ratio: 9 / 16;
       background: #000;
-      border-radius: 18px;
+      border-radius: 16px;
       overflow: hidden;
       position: relative;
-      border: 1px solid var(--border);
+      border: 1px solid #18181b;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     }
 
-    iframe {
+    /* Lecteur Natif iPhone */
+    video {
       width: 100%;
       height: 100%;
-      border: none;
+      object-fit: contain;
       background: #000;
+      display: none;
+    }
+
+    /* Mode secours recadré (cache le haut et le bas des sites) */
+    .crop-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      display: none;
+      background: #000;
+    }
+
+    .crop-wrapper iframe {
+      position: absolute;
+      border: none;
+      width: 100%;
+      height: 132%;
+      top: -12%;
+      left: 0;
+      background: #000;
+    }
+
+    .crop-wrapper.ig-crop iframe {
+      height: 142%;
+      top: -11%;
+      transform: scale(1.04);
+    }
+
+    /* Barre de contrôle rapide iOS sous la vidéo */
+    .native-bar {
+      width: 100%;
+      max-width: 400px;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .native-bar button {
+      flex: 1;
+      padding: 10px 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
     }
 
     .empty-state {
@@ -147,142 +174,342 @@
       padding: 24px;
       color: var(--subtext);
       font-size: 0.85rem;
+      line-height: 1.4;
     }
 
-    /* Bouclier anti-clics pour bloquer les boutons "Suivant / Voir plus" */
-    .shield-bottom {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 70px;
-      background: transparent;
-      z-index: 5;
-      pointer-events: auto;
-    }
-
-    .status-bar {
+    .status-line {
       width: 100%;
-      max-width: 440px;
+      max-width: 400px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 8px 4px 0 4px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--subtext);
+      margin-top: 8px;
+      padding: 0 4px;
+    }
+
+    /* Panneau réglages API optionnel */
+    .settings-panel {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+      display: none;
+      font-size: 0.8rem;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>FocusReel <span class="badge">Anti-Feed</span></h1>
-    <button class="danger" id="closeBtn" style="padding: 6px 10px; font-size: 0.75rem; display: none;">Fermer la vidéo</button>
+    <h1>FocusReel</h1>
+    <div class="header-actions">
+      <button class="secondary" id="settingsBtn" title="Réglages API">⚙️</button>
+      <button class="danger" id="closeBtn" style="display: none;">Fermer</button>
+    </div>
   </header>
 
+  <div class="settings-panel" id="settingsPanel">
+    <div style="margin-bottom: 6px; color: var(--subtext);">
+      Optionnel : URL d'une instance Cobalt API (pour forcer le .mp4 sur Instagram/FB) :
+    </div>
+    <div style="display: flex; gap: 6px;">
+      <input type="url" id="cobaltInput" placeholder="https://votre-instance.cobalt.tools">
+      <button id="saveApiBtn">OK</button>
+    </div>
+  </div>
+
   <div class="controls">
-    <div class="input-row">
-      <input type="url" id="videoUrl" placeholder="Collez le lien Reel, TikTok, Short...">
-      <button id="pasteBtn" class="secondary" title="Coller">Coller</button>
-      <button id="loadBtn">Lire</button>
-    </div>
+    <input type="url" id="videoUrl" placeholder="Lien Reel, TikTok, Short...">
+    <button id="pasteBtn" class="secondary">Coller</button>
+    <button id="loadBtn">Lire</button>
   </div>
 
-  <div class="player-container">
+  <div class="player-box">
     <div class="empty-state" id="emptyState">
-      Collez un lien pour visionner la vidéo sans recommandations ni défilement infini.
+      Collez un lien.<br>Extraction directe du flux vidéo (.mp4) avec contrôles natifs iPhone.
     </div>
-    <iframe id="videoFrame" style="display: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    <!-- Masque transparent empêchant de cliquer sur les profils ou vidéos suggérées du bas -->
-    <div class="shield-bottom" id="shield" style="display: none;"></div>
+
+    <!-- Lecteur vidéo natif iOS -->
+    <video id="nativeVideo" controls playsinline webkit-playsinline preload="metadata"></video>
+
+    <!-- Lecteur de secours zoomé (sans bords blancs) -->
+    <div class="crop-wrapper" id="cropWrapper">
+      <iframe id="fallbackFrame" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+    </div>
   </div>
 
-  <div class="status-bar">
-    <span id="platformLabel">Prêt</span>
-    <span id="timerLabel"></span>
+  <!-- Boutons rapides (-10s / Pause / +10s / Plein écran) -->
+  <div class="native-bar" id="nativeBar">
+    <button id="rwBtn">↺ -10s</button>
+    <button id="playPauseBtn">⏯ Pause</button>
+    <button id="ffBtn">↻ +10s</button>
+    <button id="fsBtn">⛶ Écran</button>
+  </div>
+
+  <div class="status-line">
+    <span id="statusText">Prêt</span>
+    <span id="modeToggle" style="color: var(--accent); cursor: pointer; display: none;">Basculer le mode</span>
   </div>
 
   <script>
     const urlInput = document.getElementById('videoUrl');
-    const loadBtn = document.getElementById('loadBtn');
     const pasteBtn = document.getElementById('pasteBtn');
+    const loadBtn = document.getElementById('loadBtn');
     const closeBtn = document.getElementById('closeBtn');
-    const frame = document.getElementById('videoFrame');
     const emptyState = document.getElementById('emptyState');
-    const shield = document.getElementById('shield');
-    const platformLabel = document.getElementById('platformLabel');
+    const video = document.getElementById('nativeVideo');
+    const cropWrapper = document.getElementById('cropWrapper');
+    const fallbackFrame = document.getElementById('fallbackFrame');
+    const nativeBar = document.getElementById('nativeBar');
+    const statusText = document.getElementById('statusText');
+    const modeToggle = document.getElementById('modeToggle');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const cobaltInput = document.getElementById('cobaltInput');
+    const saveApiBtn = document.getElementById('saveApiBtn');
+
+    let currentRawUrl = '';
+    let isUsingFallback = false;
+
+    cobaltInput.value = localStorage.getItem('custom_cobalt_api') || '';
+
+    settingsBtn.addEventListener('click', () => {
+      settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
+    });
+
+    saveApiBtn.addEventListener('click', () => {
+      localStorage.setItem('custom_cobalt_api', cobaltInput.value.trim());
+      settingsPanel.style.display = 'none';
+    });
 
     pasteBtn.addEventListener('click', async () => {
       try {
         const text = await navigator.clipboard.readText();
         urlInput.value = text;
-        loadVideo();
-      } catch (err) {
+        processUrl();
+      } catch (e) {
         urlInput.focus();
       }
     });
 
-    loadBtn.addEventListener('click', loadVideo);
+    loadBtn.addEventListener('click', processUrl);
+    closeBtn.addEventListener('click', stopAll);
 
-    closeBtn.addEventListener('click', unloadVideo);
+    // Contrôles rapides iOS
+    document.getElementById('rwBtn').addEventListener('click', () => {
+      video.currentTime = Math.max(0, video.currentTime - 10);
+    });
+    document.getElementById('ffBtn').addEventListener('click', () => {
+      video.currentTime = Math.min(video.duration || 9999, video.currentTime + 10);
+    });
+    document.getElementById('playPauseBtn').addEventListener('click', () => {
+      if (video.paused) video.play();
+      else video.pause();
+    });
+    document.getElementById('fsBtn').addEventListener('click', () => {
+      if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+      else if (video.requestFullscreen) video.requestFullscreen();
+    });
 
-    function unloadVideo() {
-      frame.src = 'about:blank';
-      frame.style.display = 'none';
-      shield.style.display = 'none';
+    modeToggle.addEventListener('click', () => {
+      if (!currentRawUrl) return;
+      if (!isUsingFallback) {
+        loadCroppedFallback(currentRawUrl, "Mode recadré manuel");
+      } else {
+        processUrl();
+      }
+    });
+
+    function stopAll() {
+      video.pause();
+      video.removeAttribute('src');
+      video.load();
+      video.style.display = 'none';
+      nativeBar.style.display = 'none';
+      fallbackFrame.src = 'about:blank';
+      cropWrapper.style.display = 'none';
       closeBtn.style.display = 'none';
+      modeToggle.style.display = 'none';
       emptyState.style.display = 'block';
       urlInput.value = '';
-      platformLabel.innerText = 'Prêt';
+      currentRawUrl = '';
+      statusText.innerText = 'Prêt';
     }
 
-    function extractEmbedUrl(url) {
-      if (!url) return null;
+    function playMp4(mp4Url, label) {
+      isUsingFallback = false;
+      emptyState.style.display = 'none';
+      cropWrapper.style.display = 'none';
+      fallbackFrame.src = 'about:blank';
 
-      // YouTube Shorts
-      const ytMatch = url.match(/(?:shorts\/|youtu\.be\/|v=)([a-zA-Z0-9_-]{11})/);
-      if (ytMatch) {
-        platformLabel.innerText = 'YouTube Short';
-        return `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?autoplay=1&rel=0&modestbranding=1`;
+      video.src = mp4Url;
+      video.style.display = 'block';
+      nativeBar.style.display = 'flex';
+      closeBtn.style.display = 'block';
+      modeToggle.style.display = 'inline';
+      statusText.innerText = label + ' (Lecteur natif iOS)';
+      video.play().catch(() => {});
+    }
+
+    function loadCroppedFallback(url, reason) {
+      isUsingFallback = true;
+      video.pause();
+      video.style.display = 'none';
+      nativeBar.style.display = 'none';
+      emptyState.style.display = 'none';
+      cropWrapper.className = 'crop-wrapper';
+
+      let embedUrl = null;
+      const yt = url.match(/(?:shorts\/|youtu\.be\/|v=)([a-zA-Z0-9_-]{11})/);
+      const ig = url.match(/instagram\.com\/(?:reel|reels|p)\/([a-zA-Z0-9_-]+)/);
+      const tt = url.match(/tiktok\.com\/.*video\/(\d+)/);
+
+      if (yt) {
+        embedUrl = `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&controls=1&rel=0&modestbranding=1&playsinline=1`;
+        cropWrapper.style.display = 'block';
+        fallbackFrame.style.height = '100%';
+        fallbackFrame.style.top = '0';
+      } else if (ig) {
+        embedUrl = `https://www.instagram.com/reel/${ig[1]}/embed/`;
+        cropWrapper.classList.add('ig-crop');
+        cropWrapper.style.display = 'block';
+      } else if (tt) {
+        embedUrl = `https://www.tiktok.com/embed/v2/${tt[1]}`;
+        cropWrapper.style.display = 'block';
+      } else if (url.includes('facebook.com') || url.includes('fb.watch')) {
+        embedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0`;
+        cropWrapper.style.display = 'block';
       }
 
-      // Instagram Reels / Posts
-      const igMatch = url.match(/instagram\.com\/(?:reel|p)\/([a-zA-Z0-9_-]+)/);
-      if (igMatch) {
-        platformLabel.innerText = 'Instagram Reel';
-        return `https://www.instagram.com/reel/${igMatch[1]}/embed/`;
+      if (embedUrl) {
+        fallbackFrame.src = embedUrl;
+        closeBtn.style.display = 'block';
+        modeToggle.style.display = 'inline';
+        statusText.innerText = reason;
+      } else {
+        statusText.innerText = 'Lien non supporté';
       }
+    }
 
-      // TikTok
-      const ttMatch = url.match(/tiktok\.com\/.*video\/(\d+)/);
-      if (ttMatch) {
-        platformLabel.innerText = 'TikTok Video';
-        return `https://www.tiktok.com/embed/v2/${ttMatch[1]}`;
+    // 1. Extraction via Cobalt API personnalisée (si renseignée)
+    async function tryCobalt(url) {
+      const api = localStorage.getItem('custom_cobalt_api');
+      if (!api) return null;
+      try {
+        const res = await fetch(api, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+        const data = await res.json();
+        return data.url || null;
+      } catch (e) {
+        return null;
       }
+    }
 
-      // Facebook Reels / Videos
-      if (url.includes('facebook.com')) {
-        platformLabel.innerText = 'Facebook Video';
-        return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0`;
-      }
+    // 2. Extraction directe TikTok (.mp4 sans filigrane)
+    async function tryTikTokMp4(url) {
+      try {
+        const res = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
+        const json = await res.json();
+        if (json && json.data && json.data.play) {
+          return json.data.play;
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    // 3. Extraction directe Instagram (.mp4 via passerelles publiques)
+    async function tryInstagramMp4(shortcode) {
+      // Tentative A : extraction via ddinstagram + proxy CORS
+      try {
+        const target = `https://www.ddinstagram.com/reel/${shortcode}/`;
+        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`);
+        const data = await res.json();
+        const match = data.contents && data.contents.match(/<meta property="og:video" content="([^"]+)"/i);
+        if (match && match[1]) {
+          let videoUrl = match[1].replace(/&amp;/g, '&');
+          if (videoUrl.startsWith('/')) videoUrl = 'https://www.ddinstagram.com' + videoUrl;
+          return videoUrl;
+        }
+      } catch (e) {}
+
+      // Tentative B : extraction du flux embarqué dans la page embed
+      try {
+        const embedTarget = `https://www.instagram.com/p/${shortcode}/embed/captioned/`;
+        const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(embedTarget)}`);
+        const html = await res.text();
+        const match = html.match(/"video_url":"([^"]+)"/);
+        if (match && match[1]) {
+          return JSON.parse(`"${match[1]}"`);
+        }
+      } catch (e) {}
 
       return null;
     }
 
-    function loadVideo() {
-      const rawUrl = urlInput.value.trim();
-      const embedUrl = extractEmbedUrl(rawUrl);
+    // 4. Extraction directe YouTube Shorts (.mp4 via instances Piped)
+    async function tryYouTubeMp4(videoId) {
+      const instances = [
+        'https://pipedapi.kavin.rocks',
+        'https://api.piped.private.coffee'
+      ];
+      for (const api of instances) {
+        try {
+          const res = await fetch(`${api}/streams/${videoId}`);
+          if (!res.ok) continue;
+          const data = await res.json();
+          const stream = (data.videoStreams || []).find(s => s.videoOnly === false && s.format === 'MPEG_4');
+          if (stream && stream.url) return stream.url;
+        } catch (e) {}
+      }
+      return null;
+    }
 
-      if (!embedUrl) {
-        alert("Lien non reconnu. Formats supportés : YouTube Shorts, Instagram Reels, TikTok, Facebook.");
-        return;
+    async function processUrl() {
+      const rawUrl = urlInput.value.trim();
+      if (!rawUrl) return;
+      currentRawUrl = rawUrl;
+
+      statusText.innerText = 'Extraction du flux .mp4 en cours...';
+      emptyState.innerText = 'Extraction de la vidéo brute...';
+
+      // Si le lien est déjà un .mp4 direct
+      if (rawUrl.match(/\.mp4(\?|$)/i)) {
+        return playMp4(rawUrl, 'Fichier direct');
       }
 
-      emptyState.style.display = 'none';
-      frame.src = embedUrl;
-      frame.style.display = 'block';
-      shield.style.display = 'block';
-      closeBtn.style.display = 'block';
+      // Essai via Cobalt personnalisé si configuré
+      const cobaltMp4 = await tryCobalt(rawUrl);
+      if (cobaltMp4) return playMp4(cobaltMp4, 'Flux direct');
+
+      // TikTok (fonctionne pour les liens courts vm.tiktok.com et longs)
+      if (rawUrl.includes('tiktok.com')) {
+        const mp4 = await tryTikTokMp4(rawUrl);
+        if (mp4) return playMp4(mp4, 'TikTok');
+      }
+
+      // Instagram
+      const igMatch = rawUrl.match(/instagram\.com\/(?:reel|reels|p)\/([a-zA-Z0-9_-]+)/);
+      if (igMatch) {
+        const mp4 = await tryInstagramMp4(igMatch[1]);
+        if (mp4) return playMp4(mp4, 'Instagram');
+      }
+
+      // YouTube Shorts
+      const ytMatch = rawUrl.match(/(?:shorts\/|youtu\.be\/|v=)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) {
+        const mp4 = await tryYouTubeMp4(ytMatch[1]);
+        if (mp4) return playMp4(mp4, 'YouTube');
+      }
+
+      // Si la plateforme bloque l'extraction du .mp4, bascule automatique sur le lecteur zoomé sans bordures
+      loadCroppedFallback(rawUrl, 'Extraction bloquée → Mode recadré sans bordures');
     }
   </script>
 </body>
